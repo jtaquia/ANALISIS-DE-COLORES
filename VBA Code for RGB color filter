@@ -1,0 +1,1172 @@
+Public Sub Aceptar_Click()
+
+Dim Crange As Range
+Dim IRange As Range
+Dim ORange As Range
+Dim PRange, PRange2, PRange3, PRange4, wer5 As Range
+Dim Encontrado As String
+
+Dim Flag As Integer
+Dim Selecciones  As Integer
+Dim CostValue_Max As Long
+
+
+Dim Revision As String
+Dim Palabra As String
+Dim Shp As Shape
+Dim fso As New FileSystemObject
+Dim f As Folder, sf As Folder, sf2 As Folder
+
+
+If CheckBox1.Value = True Then
+
+Dim intResult As Long
+intResult = Application.Dialogs(xlDialogEditColor).Show(40, 255, 250, 0)
+
+intResult = ThisWorkbook.Colors(40)
+
+C = intResult
+
+        rC = C Mod 256
+
+        gC = C \ 256 Mod 256
+
+        bC = C \ 65536 Mod 256
+
+        MsgBox "Esta eligiendo el color en RGB: " & rC & _
+        ", " & gC & ", " & bC
+        
+Else
+
+
+End If
+
+Worksheets("RESULTADO").Activate
+Range("a1:ax100").ClearContents
+'Worksheets("RESULTADO").Shapes.SelectAll
+'Selection.Delete
+
+
+'Worksheets("Hoja1").Activate
+'ActiveSheet.ShowAllData
+
+
+If ComboBox1.Value = "" Then
+    Continuar = 1
+    Else
+    Continuar = 0
+End If
+
+Select Case Continuar
+    Case 1:
+        MsgBox "Debe ingresar un rango de campañas."
+        Exit Sub
+    
+    Case 0:
+    
+End Select
+
+
+If ComboBox2.Value = "" Then
+    Continuar = 1
+    Else
+    Continuar = 0
+End If
+
+
+Select Case Continuar
+    Case 1:
+        MsgBox "Debe ingresar un rango de campañas."
+        Exit Sub
+    Case 0:
+End Select
+
+Unload Me
+
+StartTime = Timer
+
+
+Worksheets("Data_Maquillaje_Ejemplo").Activate
+NextCol = Cells(1, Columns.Count).End(xlToLeft).Column
+LastRow = Cells(Rows.Count, 1).End(xlUp).Row
+Cells(1, 50).Resize(LastRow, 148).ClearContents
+
+NextCcol = 70
+NextTCol = 60
+
+For j = 1 To 2
+
+    Select Case j
+        Case 1
+            MyControl = "lbSubcat"
+            MyColumn = 4
+        Case 2
+            MyControl = "LLinea" ' indicador Linea
+            MyColumn = 5
+        Case 3
+            MyControl = "LColor"
+            'MyColumn = --
+        Case 4
+            MyControl = "LPiedra" 'indicador gama
+            'MyColumn = --
+            
+     End Select
+
+NextRow = 2
+
+                For i = 0 To Me.Controls(MyControl).ListCount - 1
+                    If Me.Controls(MyControl).Selected(i) = True Then
+                        'Cells(NextRow, NextTCol).Value = _
+                        'Me.Controls(MyControl).List(i)
+                        NextRow = NextRow + 1
+                    End If
+                Next i
+
+               If NextRow > 2 Then
+                 MyFormula = "=NOT(ISNA(MATCH(RC" & MyColumn & ", R2C" & NextTCol & ":R" & NextRow - 1 & "C" & NextTCol & ",0)))"
+                 'Cells(2, NextCcol).FormulaR1C1 = MyFormula
+                 Cells(2, NextCcol).FormulaR1C1 = MyFormula
+                 NextTCol = NextTCol + 1
+                 NextCcol = NextCcol + 1
+                            
+               End If
+    
+
+Next j
+
+'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+'If Me.Controls("OptionButton4").Value = True And Selecciones >= 1 Then
+
+    'Hay que filtrar por listbox
+    
+              
+                
+               ' Unload Me
+                
+                If NextCcol > 70 Then
+                    
+                                       
+                    Set Crange = Range(Cells(1, 70), Cells(2, NextCcol - 1))
+                    Set IRange = Range("A1").CurrentRegion
+                    Set ORange = Cells(1, 80)
+                    
+                    
+                    IRange.AdvancedFilter xlFilterCopy, Crange, ORange
+                    
+                    Cells(1, 70).Resize(1, 10).EntireColumn.Clear
+                
+                End If
+                
+                
+                Set wsd = Worksheets("Hoja1")
+                FinalRow10 = wsd.Cells(Rows.Count, 80).End(xlUp).Row
+                FinalCol11 = wsd.Cells(1, Columns.Count).End(xlToLeft).Column
+                
+                Canti = FinalRow10 - 1
+                
+                If Canti > 0 Then
+                
+               
+                'Range("cb1").AutoFilter , Field:=4, Criteria1:="*" & Me.TextBox4.Text & "*"
+                'Unload Me
+        
+                 
+                
+                End If
+                
+                
+                FinalRow10 = wsd.Cells(Rows.Count, 80).End(xlUp).Row
+                FinalCol11 = wsd.Cells(1, Columns.Count).End(xlToLeft).Column
+                
+                Canti = FinalRow10 - 1
+                
+                If Canti > 0 Then
+                
+                Continua = 0
+                               
+                Else
+                Continua = 1
+                
+                         
+                End If
+                
+                
+                
+                Select Case Continua
+                Case 1:
+                
+                   ' Worksheets("RESULTADO").Activate
+                   ' Worksheets("RESULTADO").Select
+                   ' Worksheets("RESULTADO").Image1.Picture = LoadPicture("")
+                   ' MsgBox "La búsqueda realizada no encuentra registros, intente otra selección."
+                
+                'Exit Sub
+                Case Else
+                
+                Set PRange4 = wsd.Cells(1, 80).Resize(FinalRow10, FinalCol11)
+                    PRange4.Select
+                    
+                    Selection.Copy
+                    
+                    'Worksheets.Add.Name = "RESULTADO"
+                    
+                     Worksheets("RESULTADO").Activate
+                    Range("A1").Select
+                    ActiveSheet.Paste
+
+                GoTo Formato
+
+
+                    
+                    campi = Worksheets("Resultado").Cells(14, 2).Value
+                    
+                    
+                    If campi > Val(Me.ComboBox2.Value) Then
+                        Worksheets("RESULTADO").Activate
+                        Worksheets("RESULTADO").Select
+                        
+                        MsgBox "El nombre buscado aparece en un rango de campaña posterior al ingresado."
+                    
+                    End If
+
+                    Exit Sub
+                    
+                End Select
+
+    
+    
+    
+'xxxxxxxxxxxxxxxxxxx  FIN DE NOMBRE y ELECCION DE SUBCATEGORIA
+'End If
+
+
+'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+    
+              
+    
+   ' Palabra = Me.TextBox4.Value
+         
+Flag = 777
+'Range("DY1:EE300").ClearContents
+
+NextCol = Cells(1, Columns.Count).End(xlToLeft).Column
+LastRow = Cells(Rows.Count, 80).End(xlUp).Row
+Cells(1, 50).Resize(LastRow, 128).ClearContents
+
+NextCcol = 70
+NextTCol = 60
+
+For j = 1 To 2
+
+    Select Case j
+          Case 1
+            MyControl = "lbSubcat"
+            MyColumn = 4
+        Case 2
+            MyControl = "LLinea" ' indicador Linea
+            MyColumn = 5
+        Case 3
+            MyControl = "LColor"
+            'MyColumn = 8
+        Case 4
+            MyControl = "LPiedra" 'indicador gama
+            'MyColumn = 5
+            
+     End Select
+
+NextRow = 2
+
+For i = 0 To Me.Controls(MyControl).ListCount - 1
+    If Me.Controls(MyControl).Selected(i) = True Then
+        Cells(NextRow, NextTCol).Select
+        Cells(NextRow, NextTCol).Value = _
+        Me.Controls(MyControl).List(i)
+        
+                 
+        NextRow = NextRow + 1
+    End If
+Next i
+
+
+If NextRow > 2 Then
+
+    MyFormula = "=NOT(ISNA(MATCH(RC" & MyColumn & ", R2C" & NextTCol & ":R" & NextRow - 1 & "C" & NextTCol & ",0)))"
+    'Cells(2, NextCcol).FormulaR1C1 = MyFormula
+    Cells(2, NextCcol).FormulaR1C1 = MyFormula
+    NextTCol = NextTCol + 1
+    NextCcol = NextCcol + 1
+End If
+
+Next j
+
+
+
+If NextCcol > 70 Then
+
+    Set Crange = Range(Cells(1, 70), Cells(2, NextCcol - 1))
+    Set IRange = Range("A1").CurrentRegion
+    Set ORange = Cells(1, 80)
+    IRange.AdvancedFilter xlFilterCopy, Crange, ORange
+    
+    'Cells(1, 70).Resize(1, 10).EntireColumn.Clear
+
+End If
+
+
+Set wsd = Worksheets("Data_Maquillaje_Ejemplo")
+FinalRow = wsd.Cells(Rows.Count, 80).End(xlUp).Row
+FinalCol = wsd.Cells(1, Columns.Count).End(xlToLeft).Column
+
+Canti = FinalRow - 1
+
+If Canti > 0 Then
+Continua = 0
+Else
+Continua = 1
+End If
+
+Select Case Continua
+Case 1:
+
+    Worksheets("RESULTADO").Activate
+    Worksheets("RESULTADO").Select
+    MsgBox "La búsqueda realizada no encuentra registros, intente otra selección."
+
+Exit Sub
+Case Else
+
+End Select
+
+
+FinalRow = wsd.Cells(Rows.Count, 80).End(xlUp).Row
+FinalCol = wsd.Cells(1, Columns.Count).End(xlToLeft).Column - 80
+
+ Application.ScreenUpdating = False
+Set PRange = wsd.Cells(1, 80).Resize(FinalRow, FinalCol + 1)
+PRange.Select
+
+'TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+'TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+'TTTTTTTTTTT                                                          TTTTTTTTT
+'TTTTTTTTTTT  DESARROLLO DE FILTRO DE CAMPAÑAS. COMBOBOX1             TTTTTTTTT
+'TTTTTTTTTTT                                                          TTTTTTTTT
+'TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+'TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+
+    'ActiveSheet.Range(Cells(FinalRow + 7, 1), Cells(LR4, 49)).Name = "kari11" 'NUEVO RANGO DE DATOS DE RESULTADO
+    ActiveSheet.Range(Cells(1, 80), Cells(1, 80 + FinalCol)).Select
+    Selection.Copy
+    ActiveSheet.Cells(FinalRow + 3, 80).Select
+    ActiveSheet.Paste
+    ActiveSheet.Cells(FinalRow + 4, 81).Value = ">=" & ComboBox1.Value
+   
+    'If Clase_Oferta <> "" Then
+    
+   ' ActiveSheet.Cells(FinalRow + 4, 84).Value = ""
+    
+   ' Else
+    
+    'ActiveSheet.Cells(FinalRow + 4, 87).Value = "COMISIONABLE"
+    
+   ' End If
+   
+
+    Application.ScreenUpdating = False
+    ActiveSheet.Range(Cells(FinalRow + 3, 80), Cells(FinalRow + 4, FinalCol + 80)).Name = "kari9" ' CRITERIOS DE FILTRADO
+        Range("kari9").Select
+    
+    ActiveSheet.Cells(FinalRow + 7, 80).Name = "kari8" 'UBICACION DEL RESULTADO DEL FILTRO AVANZADO
+    Range("kari8").Select
+    
+    PRange. _
+        AdvancedFilter Action:=xlFilterCopy, CriteriaRange:=Range("kari9") _
+        , CopyToRange:=Range("kari8"), Unique:=True
+
+    FinalRow2 = wsd.Cells(Rows.Count, 80).End(xlUp).Row
+     
+    Canti = FinalRow2 - (FinalRow + 7)
+    
+    If Canti = 0 Then
+    
+    Aviso = 1
+    
+    Else
+    
+    Aviso = 0
+    
+    End If
+    
+    Select Case Aviso
+    Case 1:
+    
+    Encontrado = Worksheets("Data_Maquillaje_Ejemplo").Cells(2, 81).Value
+    
+    ' Worksheets("RESULTADO").Activate
+    ' Worksheets("RESULTADO").Select
+  
+     MsgBox "La búsqueda realizada no encuentra registros en el rango seleccionado pero intente desde " & Encontrado & " en adelante y encontrará lo que busca."
+
+    
+    Exit Sub
+    Case 0:
+        
+     End Select
+    
+
+'TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+'TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+'TTTTTTTTTTT                                                          TTTTTTTTT
+'TTTTTTTTTTT  DESARROLLO DE FILTRO DE CAMPAÑAS. COMBOBOX2             TTTTTTTTT
+'TTTTTTTTTTT                                                          TTTTTTTTT
+'TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+'TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+
+Application.ScreenUpdating = False
+
+FinalRow2 = wsd.Cells(Rows.Count, 80).End(xlUp).Row
+FinalCol2 = wsd.Cells(1, Columns.Count).End(xlToLeft).Column
+Set PRange2 = wsd.Cells(FinalRow + 7, 80).Resize(FinalRow2, FinalCol2 + 1)
+PRange2.Select
+
+    ActiveSheet.Range(Cells(1, 80), Cells(1, FinalCol)).Select
+    Selection.Copy
+    ActiveSheet.Cells(FinalRow2 + 3, 80).Select
+    ActiveSheet.Paste
+    ActiveSheet.Cells(FinalRow2 + 4, 80).Value = "<=" & ComboBox2.Value
+    
+    
+    ActiveSheet.Range(Cells(FinalRow2 + 3, 80), Cells(FinalRow2 + 4, 128)).Name = "kari9" ' CRITERIOS DE FILTRADO EN COMBOBOX2
+    Range("kari9").Select
+    
+    ActiveSheet.Cells(FinalRow2 + 7, 80).Name = "kari8" 'UBICACION DEL RESULTADO DEL FILTRO AVANZADO
+    Range("kari8").Select
+     Application.ScreenUpdating = False
+    PRange2. _
+        AdvancedFilter Action:=xlFilterCopy, CriteriaRange:=Range("kari9") _
+        , CopyToRange:=Range("kari8"), Unique:=True
+
+'TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+'TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+'TTTTTTTTTTT                                                          TTTTTTTTT
+'TTTTTTTTTTT  SELECCION DE xlCaptioContains en Autofiltro             TTTTTTTTT
+'TTTTTTTTTTT                                                          TTTTTTTTT
+'TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+'TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+
+
+FinalRow3 = wsd.Cells(Rows.Count, 80).End(xlUp).Row
+FinalRow4 = FinalRow2 + 7
+
+Canti2 = FinalRow3 - FinalRow4
+
+'Maxim_val_find = ActiveWorkbo
+'LR5 = ActiveSheet.Cells(Rows.Count, 1).End(xlUp).Row  'Identifica cantidad de filas
+Set wer44 = ActiveSheet.Range(Cells(FinalRow4 + 1, 123), Cells(FinalRow3, 123))
+wer44.Select
+
+CostValue_Max = WorksheetFunction.Max(wer44)
+
+'If Me.TextBox5.Text <> "" Then
+
+'Range("cb" & FinalRow4).AutoFilter , Field:=44, Criteria1:=">=" & Val(Me.TextBox5.Text), Operator:=xlAnd, Criteria2:=" <= " & Val(Me.TextBox6.Text)
+
+'Else
+
+'End If
+
+FinalRow3 = wsd.Cells(Rows.Count, 80).End(xlUp).Row
+   
+    Canti = FinalRow3 - (FinalRow2 + 7)
+    
+    If Canti = 0 And Canti2 <> 0 Then
+    Aviso = 1
+    Else
+    Aviso = 0
+    End If
+    
+    Select Case Aviso
+    Case 1:
+    Worksheets("Hoja1").Activate
+    Encontrado = Worksheets("Hoja1").Cells(FinalRow + 8, 81).Value
+        
+    Worksheets("RESULTADO").Activate
+    Worksheets("RESULTADO").Select
+   
+    
+     'MsgBox "Hay resultados desde " & Encontrado & " en adelante pero el costo maximo de la seleccion es " & CostValue_Max & " USD . Amplie el rango de busqueda y apareceran referencias, con un costo minimo de " & Me.TextBox5.Text & " USD ."
+
+        Exit Sub
+    Case 0:
+    
+        
+    
+    
+    End Select
+    
+'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+'XXXXXXXXXXXXXXXX   COPIA RANGO DE RESULTADOS PARA REPORTE FINAL    XXXXXX
+'XXXXXXXXXXXXXXXX                                                   XXXXXX
+'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+
+Application.ScreenUpdating = False
+
+    
+FinalRow3 = wsd.Cells(Rows.Count, 80).End(xlUp).Row
+Valores11 = FinalRow3 - FinalRow2
+FinalCol2 = wsd.Cells(1, Columns.Count).End(xlToLeft).Column
+Set PRange3 = wsd.Cells(FinalRow2 + 7, 80).Resize(Canti + 1, FinalCol2 - 79)
+PRange3.Select
+    
+    Selection.Copy
+
+
+
+Range("EH1").Select
+ActiveSheet.Paste
+
+    
+
+
+    'If Puntaje1 + Puntaje2 + Puntaje3 + Puntaje4 > 1 Then
+    ' Aviso = 1
+    '    Else
+    '    Aviso = 0
+    '    End If
+        
+    Select Case Aviso
+    Case 1:
+    
+    
+    MsgBox "Si va a buscar con palabras active una sola casilla. Ingrese nuevamente su selección"
+    
+    Exit Sub
+    
+    Case 0:
+    
+    End Select
+    
+    
+    'Palabra = Me.TextBox4.Value
+    
+    'MsgBox Palabra
+
+ 
+
+    Worksheets("RESULTADO").Activate
+   ' Worksheets("RESULTADO").Select
+    'ActiveSheet.Range(Cells(14, 1), Cells(1000, 50)).Select
+    
+    Cells.Select
+    Selection.ClearContents
+
+        wsd.Activate
+  '      WSD.Select
+
+Application.ScreenUpdating = False
+
+FinalRow10 = wsd.Cells(Rows.Count, 138).End(xlUp).Row
+FinalCol11 = wsd.Cells(1, Columns.Count).End(xlToLeft).Column
+
+Set PRange4 = wsd.Cells(1, 138).Resize(FinalRow10, FinalCol11 - 137)
+PRange4.Select
+
+If FinalRow10 <> 1 Then
+Mayi = 0
+Else
+Mayi = 1
+
+End If
+
+Select Case Mayi
+
+Case 1:
+    
+    Worksheets("RESULTADO").Activate
+    Worksheets("RESULTADO").Select
+  
+    MsgBox " No se encuentran resultados con la selección ingresada. Intente nuevamente."
+
+     
+    Exit Sub
+
+Case Else
+
+End Select
+
+Selection.Copy
+
+'Worksheets.Add.Name = "RESULTADO"
+
+   Worksheets("RESULTADO").Activate
+                    Range("A1").Select
+                    ActiveSheet.Paste
+
+     
+Formato:
+            lcolumn = Cells(1, Columns.Count).End(xlToLeft).Column
+            lrow = Cells(Rows.Count, "A").End(xlUp).Row
+
+             Cells.Select
+             With Selection.Interior
+                  .Pattern = xlNone
+                  .TintAndShade = 0
+                  .PatternTintAndShade = 0
+             End With
+
+
+            Canti = lrow - 1
+
+   
+ Application.ScreenUpdating = False
+ 
+ For i = 1 To Canti
+  
+    'Worksheets(snombreHoja).Activate
+    Worksheets("RESULTADO").Activate
+    Cells(1 + i, 6).Select
+    
+   ' Dim MyDocuments As Worksheet
+   'Set MyDocuments = Worksheets("RESULTADO")
+  
+   
+       lr100 = ActiveSheet.Cells(Rows.Count, 1).End(xlUp).Row  'Identifica cantidad de filas
+       
+       linea = ActiveCell.Row
+       referencia = LTrim(Left(Cells(linea, 6).Value, 8))
+      
+           ' Campanha = LTrim(Right(Cells(linea, 2).Value, 2))
+           ' Anho = LTrim(Left(Cells(linea, 2).Value, 4))
+           ' Anho_red = LTrim(Right(Anho, 2))
+       
+'     strPath100 = "D:\IMAGENES\"
+    
+'Set f = fso.GetFolder(strPath100)
+
+'For Each sf In f.SubFolders
+
+'Anho = sf.Path
+'For Each sf2 In sf.SubFolders
+
+'Campanha = sf2.Path & "\"
+
+
+'    strPath = "D:\IMAGENES\" & Anho & "\C" & Campanha & "-" & Anho_red & "\"
+  '  extension = Len(Campanha)
+ '
+   ' strFile2 = Campanha & "*" & referencia & "*"
+    
+   ' strFile = Campanha & Dir(strFile2)
+    
+   'If Len(strFile) = extension Then
+    
+    'GoTo Continuar2
+    
+    'Else
+    
+    'GoTo Proximo
+    
+    'End If
+    
+'Continuar2:
+'Next
+
+'Next
+
+'Proximo:
+    
+    Rows(ActiveCell.Row).Select
+    Selection.Copy
+    Cells(lr100 + 1, 1).Select
+    ActiveSheet.Paste
+    
+    Rows(ActiveCell.Row).Select
+    
+     With Selection
+        .HorizontalAlignment = xlGeneral
+        .VerticalAlignment = xlCenter
+        .WrapText = False
+        .Orientation = 0
+        .AddIndent = False
+        .IndentLevel = 0
+        .ShrinkToFit = False
+        .ReadingOrder = xlContext
+        .MergeCells = False
+    End With
+    With Selection
+        .HorizontalAlignment = xlCenter
+        .VerticalAlignment = xlCenter
+        .WrapText = False
+        .Orientation = 0
+        .AddIndent = False
+        .IndentLevel = 0
+        .ShrinkToFit = False
+        .ReadingOrder = xlContext
+        .MergeCells = False
+    End With
+    With Selection
+        .HorizontalAlignment = xlCenter
+        .VerticalAlignment = xlCenter
+        .WrapText = True
+        .Orientation = 0
+        .AddIndent = False
+        .IndentLevel = 0
+        .ShrinkToFit = False
+        .ReadingOrder = xlContext
+        .MergeCells = False
+    End With
+        
+    Selection.RowHeight = 60
+    Selection.ColumnWidth = 25
+    Cells(lr100 + 1, 2).Select
+    
+    If CheckBox1.Value = False Then
+    
+    Else
+        'ActiveSheet.Pictures.Insert(strFile).Select
+        'Selection.ShapeRange.Height = 90
+     
+    End If
+   
+  '  Selection.ShapeRange.Align msoAlignCenters, False
+    
+ Next
+   
+    For Each Shp In ActiveSheet.Shapes
+        Shp.Select
+         
+        Dim vSel As Variant
+        Dim rngZ As Range
+        Set vSel = Selection
+        If VarType(vSel) = vbObject Then
+            With vSel
+                Set rngZ = .TopLeftCell
+                .Top = rngZ.Top + (rngZ.Height - .Height) / 2
+                .Left = rngZ.Left + (rngZ.Width - .Width) / 2
+                .ShapeRange.LockAspectRatio = -1
+                .Placement = xlMoveAndSize
+                .PrintObject = True
+            End With
+            rngZ.Select
+        End If
+    Next
+    
+     Application.ScreenUpdating = False
+    
+    lcolumn = Cells(1, Columns.Count).End(xlToLeft).Column
+    Range(Cells(2, 1), Cells(lrow, lcolumn)).Select
+    'Selection.EntireRow.Hidden = True
+     Rows("2:" & lrow).Select
+     Selection.Delete Shift:=xlUp
+     
+    'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+    'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+    
+    lr100 = ActiveSheet.Cells(1, 1).End(xlDown).Row  'Identifica cantidad de filas
+    LR200 = lr100
+    
+    'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+    'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+    
+   ' Columns("c:C").Select
+   ' Selection.Delete Shift:=xlToLeft
+  
+    
+    Range("A1").Select
+    ActiveCell.FormulaR1C1 = "SUBCATEGORIA"
+    Range("B1").Select
+    ActiveCell.FormulaR1C1 = "CAMPAÑA"
+    Range("c1").Select
+    ActiveCell.FormulaR1C1 = "CÓDIGO"
+    Range("D1").Select
+    ActiveCell.FormulaR1C1 = "LÍNEA"
+    Range("E1").Select
+    ActiveCell.FormulaR1C1 = "GAMA"
+    Range("F1").Select
+    ActiveCell.FormulaR1C1 = "PRODUCTO"
+    
+    Selection.End(xlToLeft).Select
+    Rows("1:1").RowHeight = 35.25
+    Range(Selection, Selection.End(xlToRight)).Select
+    
+    With Selection
+        .HorizontalAlignment = xlCenter
+        .VerticalAlignment = xlBottom
+        .WrapText = False
+        .Orientation = 0
+        .AddIndent = False
+        .IndentLevel = 0
+        .ShrinkToFit = False
+        .ReadingOrder = xlContext
+        .MergeCells = False
+    End With
+   
+    Selection.Font.Size = 14
+    Rows("1:1").Select
+    
+    With Selection
+        .HorizontalAlignment = xlCenter
+        .VerticalAlignment = xlCenter
+        .WrapText = True
+        .Orientation = 0
+        .AddIndent = False
+        .IndentLevel = 0
+        .ShrinkToFit = False
+        .ReadingOrder = xlContext
+        .MergeCells = False
+    End With
+    With Selection.Interior
+        .Pattern = xlSolid
+        .PatternColorIndex = xlAutomatic
+        .Color = 49407
+        .TintAndShade = 0
+        .PatternTintAndShade = 0
+    End With
+    With Selection.Font
+        .ThemeColor = xlThemeColorDark1
+        .TintAndShade = 0
+    End With
+    Selection.Font.Bold = True
+    
+    Range("a2").Select
+    ActiveWindow.FreezePanes = True
+    
+    ActiveWindow.DisplayGridlines = False
+    
+'      lrow = Cells(1, 3).End(xlDown).Row - 1
+  
+ '   For i = 1 To lrow
+    
+ '   Ubicacion_e = InStrRev(Cells(i + 1, 6).Value, " ", -1)
+                                                        
+ '   Cells(i + 1, 6).Value = Mid(Cells(i + 1, 6).Value, 1, Ubicacion_e)
+
+  '  Next
+    
+    
+   ' Dim nombreHoja2 As String
+   
+    
+    'nombreHoja2 = "Paises"
+    
+    'If (BuscarHoja2(nombreHoja2)) Then
+    ' Application.DisplayAlerts = False
+   ' Sheets("Paises").Visible = False
+   ' Sheets("Hoja4").Visible = False
+   ' Sheets("Hoja1").Visible = False
+    'End If
+    
+    
+    LR5 = Worksheets("RESULTADO").Cells(2, 1).End(xlDown).Row 'Identifica cantidad de filas
+
+'Application.Dialogs(xlDialogEditColor).Show (10)
+'Application.Dialogs(xlDialogColorPalette).Show
+
+'Application.Dialogs(xlDialogPatterns).Show
+'Dim intResult As Long
+'displays the color dialog
+'Application.Dialogs(xlDialogEditColor).Show(40, 100, 100, 200)
+'gets the color selected by the user
+'intResult = ThisWorkbook.Colors(40)
+'intResult = Application.Dialogs(xlDialogEditColor).Show(40, 100, 100, 200)
+'intResult = ThisWorkbook.Colors(40)
+
+
+'intResult = Application.Dialogs(xlDialogEditColor).Show(40, 100, 125, 125)
+
+
+'changes the fill color of cell A1
+'Range("A1").Interior.Color = intResult
+
+ Application.ScreenUpdating = False
+
+For i = 1 To LR5 - 1
+
+
+Cells(1 + i, 11).Select
+
+ActiveCell.Interior.Color = RGB(Cells(1 + i, 8).Value, Cells(1 + i, 9).Value, Cells(1 + i, 10).Value)
+
+Next
+    
+    
+    
+    Dim wsr As Range
+    
+    Range("A1").Select
+    Range(Selection, Selection.End(xlDown)).Select
+    Range(Selection, Selection.End(xlToRight)).Select
+    
+    Set wsr = Selection
+       
+  
+  'YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY
+  'YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY
+  
+  'SE CLASIFICA EL COLOR SEGUN LA POSICION DE rC, gC, bC
+  'SE CALCULAN LAS DIFERENCIAS CONSIDERANDO UNA LISTA TOMANDO EN CUENTA LA DISTANCIA EN SU RESPECTIVO EJE DE CADA DIM
+  'AQUI HAY DOS OPCIONES, EL PUNTAJE DEL COLOR ES MUCHO MAYOR QUE LAS OTRAS DIMENSIONES ---> SE APLICA UNA LOGICA PORQUE SERA r,g,b
+  'SI
+  
+  'YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY
+  'YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY
+  
+  If rC > 204 Then
+        prC = 5
+        
+        Else
+        
+        If rC > 153 Then
+            prC = 4
+            
+            Else
+            
+                If rC > 102 Then
+                
+                prC = 3
+                
+                Else
+                    If rC > 51 Then
+                    
+                    prC = 2
+                    
+                    Else
+                    
+                    prC = 1
+                    
+                    End If
+                
+                End If
+            
+        End If
+    
+    
+  End If
+  
+   
+  
+  If gC > 204 Then
+        pgC = 5
+        
+        Else
+        
+        If gC > 153 Then
+            pgC = 4
+            
+            Else
+            
+                If gC > 102 Then
+                
+                pgC = 3
+                
+                Else
+                    
+                    If gC > 51 Then
+                    
+                    pgC = 2
+                    
+                    Else
+                    
+                    pgC = 1
+                    
+                    End If
+                
+                End If
+            
+        End If
+    
+    
+  End If
+  
+  
+ If bC > 204 Then
+        pbC = 5
+        
+        Else
+        
+        If bC > 153 Then
+            pbC = 4
+            
+            Else
+            
+                If bC > 102 Then
+                
+                pbC = 3
+                
+                Else
+                    
+                    If bC > 51 Then
+                    
+                    pbC = 2
+                    
+                    Else
+                    
+                    pbC = 1
+                    
+                    End If
+                
+                End If
+            
+        End If
+    
+    
+  End If
+  
+  
+  Select Case prC
+  
+  Case 5:
+  
+  Lim_Sup_Red = 255
+  Lim_Inf_Red = 204
+  
+  Case 4:
+  
+  Lim_Sup_Red = 204
+  Lim_Inf_Red = 153
+     
+      
+  Case 3:
+  
+  Lim_Sup_Red = 153
+  Lim_Inf_Red = 102
+ 
+  
+  Case 2:
+  
+  Lim_Sup_Red = 102
+  Lim_Inf_Red = 51
+ 
+  Case 1:
+  Lim_Sup_Red = 51
+  Lim_Inf_Red = 0
+  
+  
+  End Select
+  
+  
+  Select Case pgC
+  
+  Case 5:
+  
+  Lim_Sup_Green = 255
+  Lim_Inf_Green = 204
+  
+  Case 4:
+  
+  Lim_Sup_Green = 204
+  Lim_Inf_Green = 153
+     
+      
+  Case 3:
+  
+  Lim_Sup_Green = 153
+  Lim_Inf_Green = 102
+ 
+  
+  Case 2:
+  
+  Lim_Sup_Green = 102
+  Lim_Inf_Green = 51
+ 
+  Case 1:
+  Lim_Sup_Green = 51
+  Lim_Inf_Green = 0
+  
+  
+  End Select
+  
+  Select Case pbC
+  
+  Case 5:
+  
+  Lim_Sup_Blue = 255
+  Lim_Inf_Blue = 204
+  
+  Case 4:
+  
+  Lim_Sup_Blue = 204
+  Lim_Inf_Blue = 153
+     
+      
+  Case 3:
+  
+  Lim_Sup_Blue = 153
+  Lim_Inf_Blue = 102
+ 
+  
+  Case 2:
+  
+  Lim_Sup_Blue = 102
+  Lim_Inf_Blue = 51
+ 
+  Case 1:
+  Lim_Sup_Blue = 51
+  Lim_Inf_Blue = 0
+  
+  
+  End Select
+  
+  
+  
+   Selection.AutoFilter
+                
+        
+        wsr.AutoFilter Field:=8, Criteria1:=">=" & Lim_Inf_Red, _
+        Operator:=xlAnd, Criteria2:="<=" & Lim_Sup_Red
+        
+        wsr.Sort Key1:=Range("H1"), Order1:=xlDescending
+        
+        Range("I1").Select
+        Range(Selection, Selection.End(xlDown)).Select
+        
+        Dim GreenRange As Range
+        
+        Set GreenRange = Selection
+        
+        wsr.AutoFilter Field:=9, Criteria1:=">=" & Lim_Inf_Green, _
+        Operator:=xlAnd, Criteria2:="<=" & Lim_Sup_Green
+        
+               
+        
+        Range("J1").Select
+        Range(Selection, Selection.End(xlDown)).Select
+        
+        Dim BlueRange As Range
+        
+        Set BlueRange = Selection
+    
+        wsr.AutoFilter Field:=10, Criteria1:=">=" & Lim_Inf_Blue, _
+        Operator:=xlAnd, Criteria2:="<=" & Lim_Sup_Blue
+        
+            
+    Range("H7").Select
+    
+    
+  
+  
+  
+  
+  
+  'ESTE ES EL FILTRO FINAL DE COLORES CON RANGO
+  
+   
+  ' ActiveSheet.Range("$A$1:$K$8").AutoFilter Field:=11, Criteria1:=RGB(rC, gC, bC), Operator:=xlFilterCellColor
+   
+  
+  
+       
+    EndTime = Timer
+    
+   kind1 = EndTime - StartTime
+   kind2 = WorksheetFunction.Round(kind1 / 60, 2)
+   
+    MsgBox "¡Proceso terminado en " & kind1 & " segundos! ", vbInformation, xMensaje
+   
+   Debug.Print "Execution time in seconds: ", EndTime - StartTime
+
+End Sub
